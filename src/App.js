@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import FamilyQty from "./Components/FamilyQty";
 import FormSubmit from "./Components/FormSubmit";
+
 import "./App.css";
 
 function App() {
+  // OBJETO UTILIZADO PARA ARMAZENAR TODOS OS DADOS DO FORMULÁRIO QUE SERÃO SUBMETIDOS PARA O EMAIL
   const [formValues, setFormValues] = useState({
     name: "",
     email: "",
@@ -19,7 +21,6 @@ function App() {
     healthInsurance: 30,
     familyMembers: false,
     familyQty: 1,
-    formSubmit: false,
     BaseValSS: 0,
     VacTwlSS: 0,
     BaseValIRS: 0,
@@ -33,36 +34,52 @@ function App() {
     AnualCost: 0,
     MonthCost: 0,
     DailyCost: 0,
+    formSubmit: false, //VARIÁVEL DO OBJETO QUE CONTROLA O HTML MOSTRADO NO APP.JS (PREENCHIMENTO(FALSE) OU JANELA DE CONFIRMAÇÃO(TRUE))
   });
-  const [baseVal, setBaseVal] = useState(0);
-  const [wsePerc, setWsePerc] = useState(25);
-  const [wseVal, setWseVal] = useState(0);
-  const [familyMembers, setFamilyMembers] = useState(false);
-  const [familyQty, setFamilyQty] = useState(1);
+
+  // VALORES AUXILIRES PARA CALCULOS DE VALORES NOS USEEFFECT
+  const [baseValAux, setBaseValAux] = useState(0);
+  const [wsePercAux, setWsePercAux] = useState(25);
+  const [wseValAux, setWseValAux] = useState(0);
+  const [familyMembersAux, setFamilyMembersAux] = useState(false);
+  const [familyQtyAux, setFamilyQtyAux] = useState(1);
+
+  // CÁLCULOS EFETUADOS EM BACK-END INVOCADOS PELOS USEEFFECTs
+  useEffect(() => {
+    fetch("http://localhost:3001/wseVal/" + baseValAux + "/" + wsePercAux)
+      .then((response) => response.json())
+      .then((data) => {
+        setWseValAux(data);
+      });
+  }, [baseValAux, wsePercAux]);
 
   useEffect(() => {
-    setWseVal(((baseVal * wsePerc) / 100).toFixed(2));
-  }, [baseVal, wsePerc]);
-
-  useEffect(() => {
-    setFormValues({
-      ...formValues,
-      vacationsTWL: ((baseVal - -wseVal) / 12).toFixed(2),
-    });
+    fetch("http://localhost:3001/vacationsTWL/" + baseValAux + "/" + wseValAux)
+      .then((response) => response.json())
+      .then((data) => {
+        setFormValues({
+          ...formValues,
+          vacationsTWL: data,
+        });
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseVal, wseVal]);
+  }, [baseValAux, wseValAux]);
 
   useEffect(() => {
-    setFormValues({
-      ...formValues,
-      healthInsurance: (familyQty * 30).toFixed(2),
-    });
+    fetch("http://localhost:3001/healthInsurance/" + familyQtyAux)
+      .then((response) => response.json())
+      .then((data) => {
+        setFormValues({
+          ...formValues,
+          healthInsurance: data,
+        });
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [familyQty]);
+  }, [familyQtyAux]);
 
   useEffect(() => {
-    if (familyMembers) {
-      setFamilyQty(1);
+    if (familyMembersAux) {
+      setFamilyQtyAux(1);
     } else {
       setFormValues({
         ...formValues,
@@ -70,28 +87,32 @@ function App() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [familyMembers]);
+  }, [familyMembersAux]);
 
+  // AO PRIMIR SUBMETER
   const handleSubmit = () => {
+    // OBJETO RECEBE VALORES AUXILIRES E PASSA PARA A CONFIRMAÇÃO DE FORMULÁRIO
     setFormValues({
       ...formValues,
-      baseVal: baseVal,
-      wsePerc: wsePerc,
-      wseVal: wseVal,
-      familyMembers: familyMembers,
-      familyQty: familyQty,
+      baseVal: baseValAux,
+      wsePerc: wsePercAux,
+      wseVal: wseValAux,
+      familyMembers: familyMembersAux,
+      familyQty: familyQtyAux,
       formSubmit: !formValues.formSubmit,
     });
   };
 
   return (
     <div>
+      {/* CONDIÇÃO UTILIZADA COM A VARIAVÉL FormSubmit PARA ALTERAR ENTRE JANELA DE (PREENCHIMENTO(FALSE) OU JANELA DE CONFIRMAÇÃO(TRUE) */}
       {formValues.formSubmit ? (
         <FormSubmit formValues={formValues} setFormValues={setFormValues} />
       ) : (
         <div className="App-background">
           <div className="Form">
             <h1 className="Form-title">Collaboration Proposal</h1>
+            {/* FORMULÁRIO UTILIZADO COM ATULIZAÇÃO DE VALORES NO onChange DOS INPUTs*/}
             <form onSubmit={handleSubmit}>
               <h3 className="Form-subtitle">GENERAL</h3>
               <input
@@ -142,8 +163,8 @@ function App() {
                   min="0"
                   step="0.01"
                   size="10"
-                  value={baseVal}
-                  onChange={(e) => setBaseVal(e.target.value)}
+                  value={baseValAux}
+                  onChange={(e) => setBaseValAux(e.target.value)}
                 />
                 €
               </div>
@@ -154,20 +175,20 @@ function App() {
                   min="0"
                   max="100"
                   size="3"
-                  value={wsePerc}
-                  onChange={(e) => setWsePerc(e.target.value)}
+                  value={wsePercAux}
+                  onChange={(e) => setWsePercAux(e.target.value)}
                 />
                 %
                 <input
                   type="range"
                   min="0"
                   max="100"
-                  value={wsePerc}
-                  onChange={(e) => setWsePerc(e.target.value)}
+                  value={wsePercAux}
+                  onChange={(e) => setWsePercAux(e.target.value)}
                 />
               </div>
               <div className="row">
-                <label>WORK SCHEDULE EXEMPTION Value: {wseVal} €</label>
+                <label>WORK SCHEDULE EXEMPTION Value: {wseValAux} €</label>
               </div>
               <div className="row">
                 <label>IRS TAX :</label>
@@ -278,13 +299,14 @@ function App() {
                 <label>FAMILY MEMBERS:</label>
                 <input
                   type="checkbox"
-                  checked={familyMembers}
-                  onChange={(e) => setFamilyMembers(e.target.checked)}
+                  checked={familyMembersAux}
+                  onChange={(e) => setFamilyMembersAux(e.target.checked)}
                 />
+                {/* COMPONENT QUE APARECE CONFORME O VALOR DA checkbox */}
                 <FamilyQty
-                  familyMembers={familyMembers}
-                  setFamilyQty={setFamilyQty}
-                  familyQty={familyQty}
+                  familyMembers={familyMembersAux}
+                  setFamilyQty={setFamilyQtyAux}
+                  familyQty={familyQtyAux}
                 />
               </div>
               <div className="row-submit">

@@ -1,0 +1,174 @@
+useEffect(() => {
+    fetch(
+      "http://localhost:3001/BaseValSS/" +
+        props.formValues.baseVal +
+        "/" +
+        props.formValues.wseVal
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        props.setFormValues({
+          ...props.formValues,
+          BaseValSS: data,
+        });
+      });
+    fetch("http://localhost:3001/VacTwlSS/" + props.formValues.vacationsTWL)
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          VacTwlSS: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/BaseValIRS/" +
+        props.formValues.baseVal +
+        "/" +
+        props.formValues.wseVal +
+        "/" +
+        props.formValues.irsPerc
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          BaseValIRS: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/VacTwlIRS/" +
+        props.formValues.vacationsTWL +
+        "/" +
+        props.formValues.irsPerc
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          VacTwlIRS: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/MonthGrossVal/" +
+        props.formValues.baseVal +
+        "/" +
+        props.formValues.wseVal +
+        "/" +
+        props.formValues.vacationsTWL +
+        "/" +
+        props.formValues.otherVal +
+        "/" +
+        props.formValues.rwaVal
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          MonthGrossVal: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/MonthNetVal/" +
+        props.formValues.MonthGrossVal +
+        "/" +
+        props.formValues.BaseValSS +
+        "/" +
+        props.formValues.VacTwlSS +
+        "/" +
+        props.formValues.BaseValIRS +
+        "/" +
+        props.formValues.VacTwlIRS
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          MonthNetVal: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/AnualGrossVal/" + props.formValues.MonthGrossVal
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          AnualGrossVal: data,
+        });
+      });
+    fetch("http://localhost:3001/AnualNetVal/" + props.formValues.MonthNetVal)
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          AnualNetVal: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/MonthBenefits/" +
+        props.formValues.comPlafond +
+        "/" +
+        props.formValues.healthInsurance
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          MonthBenefits: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/AnualBenefits/" + props.formValues.MonthBenefits
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          AnualBenefits: data,
+        });
+      });
+    fetch(
+      "http://localhost:3001/AnualCost/" +
+        props.formValues.AnualGrossVal +
+        "/" +
+        props.formValues.AnualBenefits
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          AnualCost: data,
+        });
+      });
+    fetch("http://localhost:3001/MonthCost/" + props.formValues.AnualCost)
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          MonthCost: data,
+        });
+      });
+    fetch("http://localhost:3001/DailyCost/" + props.formValues.MonthCost)
+      .then((response) => response.json())
+      .then((data) => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        props.setFormValues({
+          ...props.formValues,
+          DailyCost: data,
+        });
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);

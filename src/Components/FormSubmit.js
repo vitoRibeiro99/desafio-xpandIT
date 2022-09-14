@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import emailjs from "@emailjs/browser";
 
 function FormSubmit(props) {
+  // CALCULOS EXTRA EFETUADOS EM FRONT-END, NÃO CONSEGUI CALCULAR NO BACK-END DE FORMA A EFETAR O BOM DESEMPENHO DO FRONT-END
+  // "- -" REPRESENTA -(- __ ), UTILIZADO EM VEZ DO "+"" QUE POR VEZES EFETUAVA O CALCULO ERRADO E USAR O "- -"  RESOLVEU (AINDA DESCONHEÇO O MOTIVO)
   const BaseValSSAux =
     (props.formValues.baseVal - -props.formValues.wseVal) * 0.11;
   const VacTwlSSAux = props.formValues.vacationsTWL * 0.11;
@@ -35,6 +37,7 @@ function FormSubmit(props) {
   const DailyCostAux = MonthCostAux / 18;
 
   useEffect(() => {
+    //ATUALIZAR CALCULOS NO OBJETO PARA SER ENVIADO PARA O TEMPLATE DE EMAIL
     props.setFormValues({
       ...props.formValues,
       BaseValSS: BaseValSSAux,
@@ -57,11 +60,12 @@ function FormSubmit(props) {
   const cancelSubmition = () => {
     props.setFormValues({
       ...props.formValues,
-      formSubmit: !props.formValues.formSubmit,
+      formSubmit: !props.formValues.formSubmit, //VARIAVÉL DO OBJETO QUE CONTROLA O HTML MOSTRADO NO App.js
     });
   };
 
   const confirmSubmition = () => {
+    //ENVIA OBJETO PARA O TEMPLATE DE EMAIL DO EMAILJS
     emailjs
       .send(
         "service_4joyxdq",
@@ -79,6 +83,7 @@ function FormSubmit(props) {
       );
     alert("Colaboration Proposal Submitted");
     props.setFormValues({
+      //HTML DO APP.JS VOLTA PARA O PREENCHIMENTO DO FORMULÁRIO E DÁ "RESET" AO VALORES
       ...props.formValues,
       name: "",
       email: "",
@@ -95,7 +100,7 @@ function FormSubmit(props) {
       healthInsurance: 30,
       familyMembers: false,
       familyQty: 1,
-      formSubmit: !props.formValues.formSubmit,
+      formSubmit: !props.formValues.formSubmit, //VARIAVÉL DO OBJETO QUE CONTROLA O HTML MOSTRADO NO App.js
     });
   };
 
