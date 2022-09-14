@@ -20,6 +20,19 @@ function App() {
     familyMembers: false,
     familyQty: 1,
     formSubmit: false,
+    BaseValSS: 0,
+    VacTwlSS: 0,
+    BaseValIRS: 0,
+    VacTwlIRS: 0,
+    MonthGrossVal: 0,
+    MonthNetVal: 0,
+    AnualGrossVal: 0,
+    AnualNetVal: 0,
+    MonthBenefits: 0,
+    AnualBenefits: 0,
+    AnualCost: 0,
+    MonthCost: 0,
+    DailyCost: 0,
   });
   const [baseVal, setBaseVal] = useState(0);
   const [wsePerc, setWsePerc] = useState(25);
@@ -28,34 +41,27 @@ function App() {
   const [familyQty, setFamilyQty] = useState(1);
 
   useEffect(() => {
-    // setFormValues({
-    //   ...formValues,
-    //   wseVal:
-    //     (parseFloat(baseVal) * parseFloat(wsePerc)) / 100,
-    // });
-    setWseVal((parseFloat(baseVal) * parseFloat(wsePerc)) / 100);
+    setWseVal(((baseVal * wsePerc) / 100).toFixed(2));
   }, [baseVal, wsePerc]);
 
   useEffect(() => {
     setFormValues({
       ...formValues,
-      vacationsTWL: (parseFloat(baseVal) - -parseFloat(wseVal)) / 12,
+      vacationsTWL: ((baseVal - -wseVal) / 12).toFixed(2),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseVal, wseVal]);
 
   useEffect(() => {
     setFormValues({
       ...formValues,
-      healthInsurance: familyQty * 30,
+      healthInsurance: (familyQty * 30).toFixed(2),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [familyQty]);
 
   useEffect(() => {
     if (familyMembers) {
-      // setFormValues({
-      //   ...formValues,
-      //   familyQty: 1,
-      // });
       setFamilyQty(1);
     } else {
       setFormValues({
@@ -63,9 +69,10 @@ function App() {
         healthInsurance: 30,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [familyMembers]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = () => {
     setFormValues({
       ...formValues,
       baseVal: baseVal,
@@ -136,13 +143,7 @@ function App() {
                   step="0.01"
                   size="10"
                   value={baseVal}
-                  onChange={
-                    (e) => setBaseVal(e.target.value)
-                    // setFormValues({
-                    //   ...formValues,
-                    //   baseVal: e.target.value,
-                    // })
-                  }
+                  onChange={(e) => setBaseVal(e.target.value)}
                 />
                 €
               </div>
@@ -154,13 +155,7 @@ function App() {
                   max="100"
                   size="3"
                   value={wsePerc}
-                  onChange={
-                    (e) => setWsePerc(e.target.value)
-                    // setFormValues({
-                    //   ...formValues,
-                    //   wsePerc: e.target.value,
-                    // })
-                  }
+                  onChange={(e) => setWsePerc(e.target.value)}
                 />
                 %
                 <input
@@ -168,13 +163,7 @@ function App() {
                   min="0"
                   max="100"
                   value={wsePerc}
-                  onChange={
-                    (e) => setWsePerc(e.target.value)
-                    // setFormValues({
-                    //   ...formValues,
-                    //   wsePerc: e.target.value,
-                    // })
-                  }
+                  onChange={(e) => setWsePerc(e.target.value)}
                 />
               </div>
               <div className="row">
@@ -290,20 +279,12 @@ function App() {
                 <input
                   type="checkbox"
                   checked={familyMembers}
-                  onChange={
-                    (e) => setFamilyMembers(e.target.checked)
-                    // setFormValues({
-                    //   ...formValues,
-                    //   familyMembers: e.target.checked,
-                    // })
-                  }
+                  onChange={(e) => setFamilyMembers(e.target.checked)}
                 />
                 <FamilyQty
                   familyMembers={familyMembers}
                   setFamilyQty={setFamilyQty}
                   familyQty={familyQty}
-                  // formValues={formValues}
-                  // setFormValues={setFormValues}
                 />
               </div>
               <div className="row-submit">

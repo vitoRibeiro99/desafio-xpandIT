@@ -1,33 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
 import emailjs from "@emailjs/browser";
 
 function FormSubmit(props) {
-  const BaseValSS =
+  const BaseValSSAux =
     (props.formValues.baseVal - -props.formValues.wseVal) * 0.11;
-  const VacTwlSS = props.formValues.vacationsTWL * 0.11;
-  const BaseValIRS =
+  const VacTwlSSAux = props.formValues.vacationsTWL * 0.11;
+  const BaseValIRSAux =
     (props.formValues.baseVal - -props.formValues.wseVal) *
     (props.formValues.irsPerc / 100);
-  const VacTwlIRS =
+  const VacTwlIRSAux =
     props.formValues.vacationsTWL * (props.formValues.irsPerc / 100);
-  const MonthGrossVal =
+  const MonthGrossValAux =
     props.formValues.baseVal -
     -props.formValues.wseVal -
     -props.formValues.vacationsTWL -
     -props.formValues.vacationsTWL -
     -props.formValues.otherVal -
     -props.formValues.rwaVal;
-  const MonthNetVal =
-    MonthGrossVal -
-    (BaseValSS + VacTwlSS + VacTwlSS + BaseValIRS + VacTwlIRS + VacTwlIRS);
-  const AnualGrossVal = MonthGrossVal * 12;
-  const AnualNetVal = MonthNetVal * 12;
-  const MonthBenefits =
+  const MonthNetValAux =
+    MonthGrossValAux -
+    (BaseValSSAux +
+      VacTwlSSAux +
+      VacTwlSSAux +
+      BaseValIRSAux +
+      VacTwlIRSAux +
+      VacTwlIRSAux);
+  const AnualGrossValAux = MonthGrossValAux * 12;
+  const AnualNetValAux = MonthNetValAux * 12;
+  const MonthBenefitsAux =
     props.formValues.comPlafond + props.formValues.healthInsurance;
-  const AnualBenefits = MonthBenefits * 12;
-  const AnualCost = AnualGrossVal + AnualBenefits;
-  const MonthCost = AnualCost / 12;
-  const DailyCost = MonthCost / 18;
+  const AnualBenefitsAux = MonthBenefitsAux * 12;
+  const AnualCostAux = AnualGrossValAux + AnualBenefitsAux;
+  const MonthCostAux = AnualCostAux / 12;
+  const DailyCostAux = MonthCostAux / 18;
+
+  useEffect(() => {
+    props.setFormValues({
+      ...props.formValues,
+      BaseValSS: BaseValSSAux,
+      VacTwlSS: VacTwlSSAux,
+      BaseValIRS: BaseValIRSAux,
+      VacTwlIRS: VacTwlIRSAux,
+      MonthGrossVal: MonthGrossValAux,
+      MonthNetVal: MonthNetValAux,
+      AnualGrossVal: AnualGrossValAux,
+      AnualNetVal: AnualNetValAux,
+      MonthBenefits: MonthBenefitsAux,
+      AnualBenefits: AnualBenefitsAux,
+      AnualCost: AnualCostAux,
+      MonthCost: MonthCostAux,
+      DailyCost: DailyCostAux,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [DailyCostAux]);
 
   const cancelSubmition = () => {
     props.setFormValues({
@@ -70,7 +95,7 @@ function FormSubmit(props) {
       healthInsurance: 30,
       familyMembers: false,
       familyQty: 1,
-      formSubmit: false,
+      formSubmit: !props.formValues.formSubmit,
     });
   };
 
@@ -128,55 +153,63 @@ function FormSubmit(props) {
         </div>
         <h3 className="Form-subtitle">DEDUCTIONS</h3>
         <div className="row">
-          <label>BASE VALUE SOCIAL SECURITY : {BaseValSS}€</label>
-        </div>
-        <div className="row">
           <label>
-            CHRISTMAS ALLOWANCE TWELFTH SOCIAL SECURITY: {VacTwlSS}€
+            BASE VALUE SOCIAL SECURITY : {props.formValues.BaseValSS}€
           </label>
         </div>
         <div className="row">
           <label>
-            VACATIONS ALLOWANCE TWELFTH SOCIAL SECURITY: {VacTwlSS}€
+            CHRISTMAS ALLOWANCE TWELFTH SOCIAL SECURITY:
+            {props.formValues.VacTwlSS}€
           </label>
         </div>
         <div className="row">
-          <label>BASE VALUE IRS : {BaseValIRS}€</label>
+          <label>
+            VACATIONS ALLOWANCE TWELFTH SOCIAL SECURITY:
+            {props.formValues.VacTwlSS}€
+          </label>
         </div>
         <div className="row">
-          <label>CHRISTMAS ALLOWANCE TWELFTH IRS: {VacTwlIRS}€</label>
+          <label>BASE VALUE IRS : {props.formValues.BaseValIRS}€</label>
         </div>
         <div className="row">
-          <label>VACATIONS ALLOWANCE TWELFTH IRS: {VacTwlIRS}€</label>
+          <label>
+            CHRISTMAS ALLOWANCE TWELFTH IRS: {props.formValues.VacTwlIRS}€
+          </label>
+        </div>
+        <div className="row">
+          <label>
+            VACATIONS ALLOWANCE TWELFTH IRS: {props.formValues.VacTwlIRS}€
+          </label>
         </div>
         <h3 className="Form-subtitle">VALUES</h3>
         <div className="row">
-          <label>MONTHLY GROSS VALUE : {MonthGrossVal}€</label>
+          <label>MONTHLY GROSS VALUE : {props.formValues.MonthGrossVal}€</label>
         </div>
         <div className="row">
-          <label>MONTHLY NET VALUE : {MonthNetVal}€</label>
+          <label>MONTHLY NET VALUE : {props.formValues.MonthNetVal}€</label>
         </div>
         <div className="row">
-          <label>ANNUAL GROSS VALUE: {AnualGrossVal}€ </label>
+          <label>ANNUAL GROSS VALUE: {props.formValues.AnualGrossVal}€ </label>
         </div>
         <div className="row">
-          <label>ANNUAL NET VALUE:{AnualNetVal}€</label>
+          <label>ANNUAL NET VALUE:{props.formValues.AnualNetVal}€</label>
         </div>
         <div className="row">
-          <label>MONTHLY BENEFITS: {MonthBenefits}€</label>
+          <label>MONTHLY BENEFITS: {props.formValues.MonthBenefits}€</label>
         </div>
         <div className="row">
-          <label>ANNUAL BENEFITS: {AnualBenefits}€</label>
+          <label>ANNUAL BENEFITS: {props.formValues.AnualBenefits}€</label>
         </div>
         <h3 className="Form-subtitle">COSTS</h3>
         <div className="row">
-          <label>ANNUAL COST: {AnualCost}€</label>
+          <label>ANNUAL COST: {props.formValues.AnualCost}€</label>
         </div>
         <div className="row">
-          <label>MONTHLY COST: {MonthCost}€</label>
+          <label>MONTHLY COST: {props.formValues.MonthCost}€</label>
         </div>
         <div className="row">
-          <label>DAILY COST: {DailyCost}€</label>
+          <label>DAILY COST: {props.formValues.DailyCost}€</label>
         </div>
         <div className="row">
           <button onClick={cancelSubmition}>Cancel</button>
