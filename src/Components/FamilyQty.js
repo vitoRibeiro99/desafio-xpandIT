@@ -7,12 +7,13 @@ function FamilyQty(props) {
         type="number"
         min="1"
         size="3"
-        value={props.formValues.familyQty}
-        onChange={(e) =>
-          props.setFormValues({
-            ...props.formValues,
-            familyQty: e.target.value,
-          })
+        value={props.familyQty}
+        onChange={
+          (e) => props.setFamilyQty(e.target.value)
+          // props.setFormValues({
+          //   ...props.formValues,
+          //   familyQty: e.target.value,
+          // })
         }
       />
     );
